@@ -1,17 +1,17 @@
-    #!groovy
+#!groovy
      
-    pipeline {
+pipeline {
      
-      agent {
+	agent {
         label 'host'
-      }
+    }
       
-      options {
-        buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '7'))
+    options {
+		buildDiscarder(logRotator(numToKeepStr: '10', daysToKeepStr: '7'))
         disableConcurrentBuilds()
-      }
+    }
       
-      stages {
+    stages {
      
         stage("Set Build Parameters") {
           steps {
@@ -25,15 +25,15 @@
           steps {
             sh 'docker build -t juiceshop -f Dockerfile-build .'
             sh 'docker run --rm -v ${PWD}:/work juiceshop npm i --package-lock-only'
-    	sh 'docker run --rm -v ${PWD}:/work juiceshop npm install'
+			sh 'docker run --rm -v ${PWD}:/work juiceshop npm install'
           }
         }
         
         stage("NPM audit") {
               steps {
-        	script {
-        		try{
-        			auditResult = sh(returnStdout: true, script: 'docker run --rm -v ${PWD}:/work juiceshop npm audit').trim()
+				script {
+					try{
+						auditResult = sh(returnStdout: true, script: 'docker run --rm -v ${PWD}:/work juiceshop npm audit').trim()
                 		echo auditResult
                 	}
                 	catch(Exception e){
@@ -72,4 +72,4 @@
             
     }
      
-    }
+}
